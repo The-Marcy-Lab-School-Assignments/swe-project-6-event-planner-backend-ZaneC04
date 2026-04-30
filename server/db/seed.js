@@ -57,7 +57,7 @@ const seed = async () => {
     'A 24-hour hackathon for developers, designers, and entrepreneurs to build innovative solutions.',
     '2025-03-15',
     'Brooklyn Navy Yard, Brooklyn, NY',
-    'hackathon',
+    'other',
     150,
     1
   ]),

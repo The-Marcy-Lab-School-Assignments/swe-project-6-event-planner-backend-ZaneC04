@@ -3,9 +3,11 @@ const pool = require('../db/pool');
 module.exports.list = async () => {
   const query = `
     SELECT events.event_id, events.title, events.description, events.date, events.location, 
-    events.event_type, events.max_capacity, users.username
+    events.event_type, events.max_capacity, users.username, COUNT(rsvps.user_id) AS rsvp_count
     FROM events
     JOIN users ON events.user_id = users.user_id
+    LEFT JOIN rsvps ON events.event_id = rsvps.event_id 
+    GROUP BY events.event_id, users.user_id
     ORDER BY events.event_id
   `;
   const { rows } = await pool.query(query);
@@ -14,10 +16,11 @@ module.exports.list = async () => {
 
 module.exports.listByUser = async (user_id) => {
   const query = `
-    SELECT *
-    FROM events
-    WHERE user_id = $1
-    ORDER BY event_id
+  SELECT events.*, COUNT(rsvps.user_id) AS rsvp_count FROM events 
+  LEFT JOIN rsvps ON events.event_id = rsvps.event_id 
+  WHERE events.user_id = $1 
+  GROUP BY events.event_id 
+  ORDER BY events.event_id
   `;
   const { rows } = await pool.query(query, [user_id]);
   return rows;
